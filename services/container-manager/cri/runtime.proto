@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package cri;
+
+option go_package = "cri/";
+
+service RuntimeService {
+  rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
+}
+
+message CreateContainerRequest {
+  string container_id = 1;
+}
+
+message CreateContainerResponse {
+  string container_id = 1;
+}
