@@ -25,7 +25,7 @@ func main() {
 	defer cancel()
 
 	req := &pb.CreateContainerRequest{
-		ContainerId: "test-container",
+		Image: "test-container",
 	}
 
 	res, err := client.CreateContainer(ctx, req)
