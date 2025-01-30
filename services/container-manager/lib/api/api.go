@@ -60,7 +60,6 @@ func makeRequest[T any](url string, method string, body interface{}, options Opt
 
 	switch any(result).(type) {
 	case string:
-    case int:
 		resText, err := io.ReadAll(res.Body)
 		if err != nil {
 			log.Fatal(err)
@@ -74,6 +73,7 @@ func makeRequest[T any](url string, method string, body interface{}, options Opt
 	}
 
 	if err != nil || res.StatusCode >= 400 {
+        log.Println("Request failed or Status code >= 400")
 		responseDump, err := httputil.DumpResponse(res, true)
 		if err != nil {
 			panic(err)
@@ -90,7 +90,7 @@ func makeRequest[T any](url string, method string, body interface{}, options Opt
 	err = decoder.Decode(&responseJson)
 
 	if err != nil {
-		log.Println("Here?")
+        log.Println("JSON decoder failed")
 		log.Fatal(err)
 	}
 

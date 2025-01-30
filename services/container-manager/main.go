@@ -32,10 +32,10 @@ func main() {
     runtimes := []container_runtime.ContainerRuntime{}
     runtimes = append(runtimes, podman)
 
-    id := podman.CreateContainer(container_runtime.Container{Image: "nginx"})
+    id := podman.CreateContainer(container_runtime.Container{Image: "golang", Command: []string{"go", "run", "/app/main.go"}, Mounts: []container_runtime.ContainerMount{container_runtime.ContainerMount{Destination: "/app", Source: "/home/drale/work/open-source/Runiverse/services/container-manager/static",BindOptions: container_runtime.BindOptions{Propagation: "rprivate"}}}})
     log.Println(id)
     id = podman.StartContainer(container_runtime.Container{Id: id})
     log.Println(id)
-    id = podman.GetLogs(container_runtime.Container{Id: id})
-    log.Println(id)
+    logs := podman.GetLogs(container_runtime.Container{Id: id})
+    log.Println(logs)
 }

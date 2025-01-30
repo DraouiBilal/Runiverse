@@ -5,13 +5,21 @@ import (
 )
 
 type Container struct {
-	Id      string `json:"Id"`
-	Name    string `json: "Name"`
-	Image   string `json:"Image"`
-	//Command string `json:"Command"`
-	//Created string `json:"Created"`
-	//Status  int    `json:"Status"`
-	//Ports   string `json:"Ports"`
+	Id      string           `json:"Id"`
+	Name    string           `json: "name"`
+	Image   string           `json:"image"`
+	Command []string         `json:"command"`
+	Mounts  []ContainerMount `json:"mounts"`
+}
+
+type ContainerMount struct {
+	Source      string      `json:"Source"`
+	Destination string      `json:"Destination"`
+	BindOptions BindOptions `json:"BindOptions"`
+}
+
+type BindOptions struct {
+	Propagation string `json:"Propagation"`
 }
 
 type Image struct {
@@ -47,8 +55,8 @@ type ContainerRuntime interface {
 	CreateContainer(Container) string
 	// ListContainers() []Container
 	StartContainer(Container) string
-    StopContainer(Container) string
-    GetLogs(Container) string
+	StopContainer(Container) string
+	GetLogs(Container) string
 	// RestartContainer(containerID string)
 	// GetContainer(containerID string)
 
