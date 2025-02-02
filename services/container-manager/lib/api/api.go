@@ -1,6 +1,7 @@
 package api
 
 import (
+	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
@@ -14,7 +15,9 @@ import (
 
 type Options struct {
 	headers map[string]string
+	Debug   bool
 	Socket  string
+	Follow  bool
 }
 
 func createRequest(url string, method string, body interface{}, options Options) *http.Request {
@@ -24,8 +27,12 @@ func createRequest(url string, method string, body interface{}, options Options)
 		log.Fatal(err)
 	}
 
+	if options.Debug {
+		log.Println(bytes.NewBuffer(payload))
+	}
+
 	req, err := http.NewRequest(method, url, bytes.NewBuffer(payload))
-	req.Header.Set("Content-Type", "applciation/json")
+	req.Header.Set("Content-Type", "application/json")
 
 	for _, k := range options.headers {
 		req.Header.Set(k, options.headers[k])
@@ -56,11 +63,50 @@ func makeRequest[T any](url string, method string, body interface{}, options Opt
 
 	res, err := client.Do(req)
 
+	if options.Debug {
+		requestDump, err := httputil.DumpRequest(req, true)
+		responseDump, reerr := httputil.DumpResponse(res, true)
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if reerr != nil {
+			log.Fatal(err)
+		}
+		log.Println(string(requestDump))
+		log.Println(string(responseDump))
+	}
+
+	if err != nil || res.StatusCode >= 400 {
+		log.Println("Request failed or Status code >= 400")
+		responseDump, err := httputil.DumpResponse(res, true)
+		if err != nil {
+			panic(err)
+		}
+		panic(string(responseDump))
+	}
+
 	var result T
 
 	switch any(result).(type) {
 	case string:
-		resText, err := io.ReadAll(res.Body)
+		resText := ""
+        var err interface{}
+
+		if options.Follow {
+			scanner := bufio.NewScanner(res.Body)
+
+			for scanner.Scan() {
+				resText += scanner.Text() + "\n"
+			}
+
+            err = scanner.Err()
+		} else {
+            var resBytes []byte
+			resBytes, err = io.ReadAll(res.Body)
+            resText = string(resBytes)
+		}
+
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -72,17 +118,6 @@ func makeRequest[T any](url string, method string, body interface{}, options Opt
 		return nil
 	}
 
-	if err != nil || res.StatusCode >= 400 {
-        log.Println("Request failed or Status code >= 400")
-		responseDump, err := httputil.DumpResponse(res, true)
-		if err != nil {
-			panic(err)
-		}
-		panic(string(responseDump))
-	}
-
-	defer res.Body.Close()
-
 	responseJson := new(T)
 
 	decoder := json.NewDecoder(res.Body)
@@ -90,9 +125,11 @@ func makeRequest[T any](url string, method string, body interface{}, options Opt
 	err = decoder.Decode(&responseJson)
 
 	if err != nil {
-        log.Println("JSON decoder failed")
+		log.Println("JSON decoder failed")
 		log.Fatal(err)
 	}
+
+	defer res.Body.Close()
 
 	return responseJson
 }

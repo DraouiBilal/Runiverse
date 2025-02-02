@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 	"github.com/DraouiBilal/Runiverse/container_runtime"
-	"github.com/DraouiBilal/Runiverse/container_runtime/runtime"
+	"github.com/DraouiBilal/Runiverse/container_runtime/setup"
 	//	   "net"
 	//	   "google.golang.org/grpc"
 	//		"github.com/DraouiBilal/Runiverse/cri"
@@ -26,16 +26,24 @@ import (
 //}
 
 func main() {
-    podman := runtime.PodmanRuntime{}
-    podman.SocketPath = "/run/user/1000/podman/podman.sock"
-    
-    runtimes := []container_runtime.ContainerRuntime{}
-    runtimes = append(runtimes, podman)
+    runtimes := setup.Setup(true)
+    log.Println(runtimes)
+	id := runtimes[0].CreateContainer(container_runtime.Container{
+		Image:   "golang",
+		Command: []string{"go", "run", "/app/main.go"},
+		Mounts: []container_runtime.ContainerMount{
+			container_runtime.ContainerMount{
+				Destination: "/app",
+				Source:      "/home/drale/work/open-source/Runiverse/services/container-manager/static",
+				Options:     []string{"rbind"},
+			},
+		},
+	})
 
-    id := podman.CreateContainer(container_runtime.Container{Image: "golang", Command: []string{"go", "run", "/app/main.go"}, Mounts: []container_runtime.ContainerMount{container_runtime.ContainerMount{Destination: "/app", Source: "/home/drale/work/open-source/Runiverse/services/container-manager/static",BindOptions: container_runtime.BindOptions{Propagation: "rprivate"}}}})
-    log.Println(id)
-    id = podman.StartContainer(container_runtime.Container{Id: id})
-    log.Println(id)
-    logs := podman.GetLogs(container_runtime.Container{Id: id})
-    log.Println(logs)
+	id = runtimes[0].StartContainer(container_runtime.Container{Id: id})
+
+    runtimes[0].WaitForContainer(container_runtime.Container{Id: id})
+
+	logs := runtimes[0].GetLogs(container_runtime.Container{Id: id})
+	log.Println(logs)
 }
