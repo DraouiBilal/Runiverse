@@ -12,7 +12,7 @@ import (
 
 func Setup(refreash bool) []container_runtime.ContainerRuntime{
 	if !refreash {
-        log.Println("Loading config from .Runiverse/runtime.yml")
+        log.Println("Loading config from" + RUNTIME_CONFIG_PATH + RUNTIME_CONFIG_FILE)
         runtimes := []container_runtime.ContainerRuntime{}
         config := loadConfigFile()
         for _, cf := range config {
@@ -30,7 +30,7 @@ func Setup(refreash bool) []container_runtime.ContainerRuntime{
 	}
 	log.Println("Setting Up Runiverse...")
 
-	checkAndCreateRuniverseDir(os.Getenv("HOME") + "/.Runiverse")
+	checkAndCreateRuniverseDir(RUNTIME_CONFIG_PATH)
 
 	runtimes := checkContainerRuntime()
 
@@ -51,7 +51,7 @@ func Setup(refreash bool) []container_runtime.ContainerRuntime{
         `, info.Name, info.Runtime, info.SocketPath, info.Version.Version, info.Version.ApiVersion))
 	}
 
-	log.Println("Creating .Runiverse/runtime.yml...")
+	log.Println("Creating runtime config file at " + RUNTIME_CONFIG_PATH + RUNTIME_CONFIG_FILE)
 	createConfigFile(runtimes)
     return runtimes
 }
@@ -111,7 +111,7 @@ func createConfigFile(runtimes []container_runtime.ContainerRuntime) {
 	}
 
 	// Create and write to the file
-	filePath := os.Getenv("HOME") + "/.Runiverse/runtime.yml"
+	filePath := RUNTIME_CONFIG_PATH + RUNTIME_CONFIG_FILE
 	err = os.WriteFile(filePath, data, 0644)
 	if err != nil {
 		fmt.Println("Error writing file:", err)
@@ -122,7 +122,7 @@ func createConfigFile(runtimes []container_runtime.ContainerRuntime) {
 }
 
 func loadConfigFile() []Config{
-    data, err := os.ReadFile(os.Getenv("HOME") + "/.Runiverse/runtime.yml")
+    data, err := os.ReadFile(RUNTIME_CONFIG_PATH + RUNTIME_CONFIG_FILE)
 	if err != nil {
 		log.Fatal("Error reading file:", err)
 	}
