@@ -21,18 +21,19 @@ func main() {
 	client := pb.NewRuntimeServiceClient(conn)
 
 	// Example: Call CreateContainer method
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	req := &pb.CreateContainerRequest{
-		Image: "test-container",
+	req := &pb.RunCodeRequest{
+		Image: "golang",
+        Command: []string{"go", "run", "/app/main.go"},
 	}
 
-	res, err := client.CreateContainer(ctx, req)
+	res, err := client.RunCode(ctx, req)
 	if err != nil {
-		log.Fatalf("Error calling CreateContainer: %v", err)
+		log.Fatalf("Error calling RunCode: %v", err)
 	}
 
-	fmt.Printf("Response from server: %s\n", res.ContainerId)
+	fmt.Printf("Response from server: %s\n", res.Logs)
 }
 

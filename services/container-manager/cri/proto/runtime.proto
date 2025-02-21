@@ -5,13 +5,14 @@ package cri;
 option go_package = "cri/";
 
 service RuntimeService {
-  rpc CreateContainer(CreateContainerRequest) returns (CreateContainerResponse);
+  rpc RunCode(RunCodeRequest) returns (RunCodeResponse);
 }
 
-message CreateContainerRequest {
-  string image = 2;
+message RunCodeRequest {
+    string image = 1;
+    repeated string command = 2;
 }
 
-message CreateContainerResponse {
-  string container_id = 1;
+message RunCodeResponse {
+  string logs = 2;
 }
