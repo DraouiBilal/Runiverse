@@ -1,33 +1,32 @@
 package main
 
 import (
-	"log"
-	"net"
-	"os"
-
 	"github.com/DraouiBilal/Runiverse/container_runtime/setup"
 	"github.com/DraouiBilal/Runiverse/cri"
 	"github.com/DraouiBilal/Runiverse/server"
 	"google.golang.org/grpc"
+	"log"
+	"net"
+	"os"
 )
 
 func main() {
 
-    refreash_runtime := true
+	refreash_runtime := true
 
-    if os.Getenv("REFREASH_RUNTIME") == "false" {
-        refreash_runtime = false
-    }
+	if os.Getenv("REFREASH_RUNTIME") == "false" {
+		refreash_runtime = false
+	}
 
-    port := os.Getenv("PORT")
+	port := os.Getenv("PORT")
 
-    if port == "" {
-        port = "50051"
-    }
-
+	if port == "" {
+		port = "50051"
+	}
 
 	runtimes := setup.Setup(refreash_runtime)
-	lis, err := net.Listen("tcp", ":" + port)
+
+	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -40,4 +39,3 @@ func main() {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }
-
