@@ -1,39 +1,46 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"time"
-
-	pb "github.com/DraouiBilal/Runiverse/cri" // Adjust this import to match your project structure
+	"github.com/DraouiBilal/Runiverse/cri"
+	"github.com/DraouiBilal/Runiverse/queue"
+	"github.com/DraouiBilal/Runiverse/server"
 	"google.golang.org/grpc"
+	"log"
+	"net"
+	"os"
 )
 
 func main() {
-	// Connect to the server
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure()) // Use WithTransportCredentials for production
+	q := queue.InitQueue()
+
+	//q.AddJob(&cri.InvocationRequest{
+	//	Image:   "golang",
+	//	Command: []string{"go", "run", "/app/main.go"},
+	//})
+
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "50052"
+	}
+
+	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
-		log.Fatalf("Failed to connect to server: %v", err)
-	}
-	defer conn.Close()
-
-	client := pb.NewRuntimeServiceClient(conn)
-
-	// Example: Call CreateContainer method
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-
-	req := &pb.RunCodeRequest{
-		Image: "golang",
-        Command: []string{"go", "run", "/app/main.go"},
+		log.Fatalf("failed to listen: %v", err)
 	}
 
-	res, err := client.RunCode(ctx, req)
-	if err != nil {
-		log.Fatalf("Error calling RunCode: %v", err)
+	grpcServer := grpc.NewServer()
+
+	// Register the gRPC service
+	cri.RegisterInvokerServiceServer(grpcServer, &server.Server{Queue: q})
+
+	log.Println("Server is listening on port " + port)
+
+	if err := grpcServer.Serve(lis); err != nil {
+		log.Fatalf("failed to serve: %v", err)
 	}
 
-	fmt.Printf("Response from server: %s\n", res.Logs)
+	q.StopWorkers()
+
+	log.Println("Queue closed, all jobs completed")
 }
-

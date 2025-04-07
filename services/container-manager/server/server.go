@@ -25,7 +25,7 @@ func (s *Server) RunCode(ctx context.Context, req *cri.RunCodeRequest) (*cri.Run
 		Mounts: []container_runtime.ContainerMount{
 			{
 				Destination: "/app",
-				Source:      "/home/bdraoui/work/repos/other/open-source/Runiverse/services/container-manager/static/",
+				Source:      "/home/drale/work/open-source/Runiverse/services/container-manager/static/",
 				Options:     []string{"rbind"},
 			},
 		},

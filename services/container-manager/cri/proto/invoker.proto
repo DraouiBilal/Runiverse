@@ -1,18 +1,27 @@
 syntax = "proto3";
 
+import "google/api/annotations.proto";
+
 package cri;
 
 option go_package = "cri/";
 
+
+
 service InvokerService {
-  rpc RunCode(RunCodeRequest) returns (RunCodeResponse);
+  rpc Invoke(InvocationRequest) returns (InvocationResponse){
+    option (google.api.http) = {
+        post: "/v1/invoke"
+        body: "*"
+    };
+  }
 }
 
-message RunCodeRequest {
+message InvocationRequest {
     string image = 1;
     repeated string command = 2;
 }
 
-message RunCodeResponse {
+message InvocationResponse {
   string logs = 2;
 }

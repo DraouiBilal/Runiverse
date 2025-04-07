@@ -39,7 +39,7 @@ func (p PodmanRuntime) GetLogs(container container_runtime.Container) string {
 }
 
 func (p PodmanRuntime) GetInfo() container_runtime.System {
-	info := api.Get[container_runtime.System]("http://localhost/v5.0.0/libpod/info", nil, api.Options{Socket: p.SocketPath, Debug: true})
+	info := api.Get[container_runtime.System]("http://localhost/v5.0.0/libpod/info", nil, api.Options{Socket: p.SocketPath})
     info.Name = p.Name
     info.Runtime = p.Runtime
     info.SocketPath = p.SocketPath

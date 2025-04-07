@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  invoker:
+    image: invoker:test
+    ports:
+      - "50052:50052"
+
+  container-manager:
+    image: container-manager:test
+    ports:
+      - "50051:50051"
+    environment:
+      REFREASH_RUNTIME: true
+    volumes:
+      - /run/user/1000/podman:/root/podman
+
+  api-gateway:
+    image: envoyproxy/envoy:v1.33-latest
+    ports:
+      - "8080:8080"
+      - "9901:9901"
+    volumes:
+      - ./services/api-gateway/config/envoy.yaml:/etc/envoy/envoy.yaml:ro
+      - ./services/api-gateway/lib/proto.pb:/etc/envoy/proto.pb
