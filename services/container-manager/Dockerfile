@@ -1,5 +1,5 @@
 # ---- Build Stage ----
-FROM docker.io/golang:1.22 AS builder
+FROM docker.io/golang:1.24 AS builder
 
 # Set working directory inside the container
 WORKDIR /app

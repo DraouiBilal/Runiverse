@@ -10,13 +10,13 @@ type RuntimeBase struct {
 	SocketPath string
 }
 
-func (runtime RuntimeBase) SocketExists() bool {
+func (runtime RuntimeBase) SocketExists() (bool, error) {
 	_, err := os.Stat(runtime.SocketPath)
 	if err == nil {
-		return true
+		return true, nil
 	}
 	if os.IsNotExist(err) {
-		return false
+		return false, nil
 	}
-	return false
+	return false, err
 }

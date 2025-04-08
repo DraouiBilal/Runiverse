@@ -2,14 +2,14 @@ package runtime
 
 import (
 	"github.com/DraouiBilal/Runiverse/container_runtime"
-	"github.com/DraouiBilal/Runiverse/lib/api"
+	"github.com/DraouiBilal/Runiverse-backend-lib/api"
 )
 
 type PodmanRuntime struct {
 	RuntimeBase
 }
 
-func (p PodmanRuntime) GetSocket() bool {
+func (p PodmanRuntime) GetSocket() (bool, error) {
 	return p.SocketExists()
 }
 

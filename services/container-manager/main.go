@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/DraouiBilal/Runiverse/container_runtime/setup"
-	"github.com/DraouiBilal/Runiverse/cri"
+	"github.com/DraouiBilal/Runiverse-cri/cri"
 	"github.com/DraouiBilal/Runiverse/server"
 	"google.golang.org/grpc"
 	"log"

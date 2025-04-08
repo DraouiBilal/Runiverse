@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/DraouiBilal/Runiverse/container_runtime"
-	"github.com/DraouiBilal/Runiverse/cri"
+	"github.com/DraouiBilal/Runiverse-cri/cri"
 	"github.com/DraouiBilal/Runiverse/runner"
 )
 
@@ -25,7 +25,7 @@ func (s *Server) RunCode(ctx context.Context, req *cri.RunCodeRequest) (*cri.Run
 		Mounts: []container_runtime.ContainerMount{
 			{
 				Destination: "/app",
-				Source:      "/home/drale/work/open-source/Runiverse/services/container-manager/static/",
+				Source:      "/home/drale/work/open-source/Runiverse/Runiverse-core/services/container-manager/static/",
 				Options:     []string{"rbind"},
 			},
 		},

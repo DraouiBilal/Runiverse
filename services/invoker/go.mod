@@ -3,6 +3,7 @@ module github.com/DraouiBilal/Runiverse
 go 1.22.3
 
 require (
+	github.com/DraouiBilal/Runiverse-cri v0.0.0-20250427120545-7e3c18165f92 // indirect
 	golang.org/x/net v0.30.0 // indirect
 	golang.org/x/sys v0.26.0 // indirect
 	golang.org/x/text v0.19.0 // indirect

@@ -56,7 +56,7 @@ func Setup(refreash bool) []container_runtime.ContainerRuntime{
     return runtimes
 }
 
-func checkContainerRuntime() []container_runtime.ContainerRuntime {
+func checkContainerRuntime() ([]container_runtime.ContainerRuntime, error) {
 	runtimes := []container_runtime.ContainerRuntime{}
 
     socketPath := os.Getenv("HOME")
@@ -73,11 +73,17 @@ func checkContainerRuntime() []container_runtime.ContainerRuntime {
 		},
 	}
 
-	if podman.SocketExists() {
+	socketExists, err := podman.SocketExists()
+
+	if err != nil {
+		return nil, err
+	}
+
+	if  socketExists {
 		runtimes = append(runtimes, podman)
 	}
 
-	return runtimes
+	return runtimes, nil
 
 }
 

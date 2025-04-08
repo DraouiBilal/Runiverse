@@ -5,12 +5,12 @@ import (
 	"log"
 	"time"
     "google.golang.org/grpc/credentials/insecure"
-	"github.com/DraouiBilal/Runiverse/cri" 
+	"github.com/DraouiBilal/Runiverse-cri/cri" 
 	"google.golang.org/grpc"
 )
 func Invoke(image string, command []string) {
 	// Connect to the server
-    conn, err := grpc.NewClient("localhost:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
+    conn, err := grpc.NewClient("container-manager:50051", grpc.WithTransportCredentials(insecure.NewCredentials()))
 
 	if err != nil {
 		log.Fatalf("Failed to connect to server: %v", err)

@@ -38,14 +38,14 @@ type ContainerMount struct {
 type ContainerRuntime interface {
 
 	// Runtime
-	GetSocket() bool
-	GetInfo() System
+	GetSocket() (bool, error)
+	GetInfo() (System, error)
 
 	// Containers
-	CreateContainer(Container) string
-	StartContainer(Container) string
-	StopContainer(Container) string
-	WaitForContainer(Container) string
-	GetLogs(Container) string
-	GetHealthCheck(Container) string
+	CreateContainer(Container) (string, error)
+	StartContainer(Container) (string, error)
+	StopContainer(Container) (string, error)
+	WaitForContainer(Container) (string, error)
+	GetLogs(Container) (string, error)
+	GetHealthCheck(Container) (string, error)
 }

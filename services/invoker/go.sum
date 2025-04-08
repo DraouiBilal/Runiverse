@@ -1,3 +1,7 @@
+github.com/DraouiBilal/Runiverse-cri v0.0.0-20250427115951-d8b5a90fd433 h1:cOakItHX39PINQckia2LZwTLMaZFM1dmCujm+CL89G8=
+github.com/DraouiBilal/Runiverse-cri v0.0.0-20250427115951-d8b5a90fd433/go.mod h1:qM7VbcWk6AQmOvnP8iJtvozIixQU7LCIwdAG8xXgcDc=
+github.com/DraouiBilal/Runiverse-cri v0.0.0-20250427120545-7e3c18165f92 h1:HOBOFZ7LJXNTLUqUI4C02IguaZB6RJAxNN2D4ri69tU=
+github.com/DraouiBilal/Runiverse-cri v0.0.0-20250427120545-7e3c18165f92/go.mod h1:qM7VbcWk6AQmOvnP8iJtvozIixQU7LCIwdAG8xXgcDc=
 golang.org/x/net v0.30.0 h1:AcW1SDZMkb8IpzCdQUaIq2sP4sZ4zw+55h6ynffypl4=
 golang.org/x/net v0.30.0/go.mod h1:2wGyMJ5iFasEhkwi13ChkO/t1ECNC4X4eBKkVFyYFlU=
 golang.org/x/sys v0.26.0 h1:KHjCJyddX0LoSTb3J+vWpupP9p0oznkqVk/IfjymZbo=

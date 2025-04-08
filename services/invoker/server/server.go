@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/DraouiBilal/Runiverse/queue"
-	"github.com/DraouiBilal/Runiverse/cri"
+	"github.com/DraouiBilal/Runiverse-cri/cri"
 )
 
 // Define the server struct
