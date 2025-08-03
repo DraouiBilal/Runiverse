@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/DraouiBilal/Runiverse/container_runtime"
-	"github.com/DraouiBilal/Runiverse-cri/cri"
+	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
 	"github.com/DraouiBilal/Runiverse/runner"
 )
 
@@ -30,6 +30,7 @@ func (s *Server) RunCode(ctx context.Context, req *cri.RunCodeRequest) (*cri.Run
 			},
 		},
 	}
-	logs := runner.RunCode(s.Runtime, container)
-	return &cri.RunCodeResponse{Logs: logs}, nil
+	logs, err := runner.RunCode(s.Runtime, container)
+
+	return &cri.RunCodeResponse{Logs: logs, Err: err.Error()},err
 }

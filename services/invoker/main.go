@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/DraouiBilal/Runiverse-cri/cri"
+	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
 	"github.com/DraouiBilal/Runiverse/queue"
 	"github.com/DraouiBilal/Runiverse/server"
 	"google.golang.org/grpc"

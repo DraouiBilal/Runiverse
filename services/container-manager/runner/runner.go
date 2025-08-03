@@ -4,15 +4,31 @@ import (
     "github.com/DraouiBilal/Runiverse/container_runtime"
 )
 
-func RunCode(runtime container_runtime.ContainerRuntime, container container_runtime.Container) string {
+func RunCode(runtime container_runtime.ContainerRuntime, container container_runtime.Container) (string, error) {
 
-	id := runtime.CreateContainer(container)
+	id, create_err := runtime.CreateContainer(container)
+	
+	if create_err != nil {
+		return "", create_err
+	}
 
-	id = runtime.StartContainer(container_runtime.Container{Id: id})
+	id, start_err := runtime.StartContainer(container_runtime.Container{Id: id})
 
-    runtime.WaitForContainer(container_runtime.Container{Id: id})
+	if start_err != nil {
+		return "", start_err
+	}
 
-	logs := runtime.GetLogs(container_runtime.Container{Id: id})
+	_, wait_err := runtime.WaitForContainer(container_runtime.Container{Id: id})
 
-    return logs
+	if wait_err != nil {
+		return "", wait_err
+	}
+
+	logs, get_logs_err := runtime.GetLogs(container_runtime.Container{Id: id})
+
+	if get_logs_err != nil {
+		return "", get_logs_err
+	}
+
+    return logs, nil
 }

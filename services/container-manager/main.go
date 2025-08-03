@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/DraouiBilal/Runiverse/container_runtime/setup"
-	"github.com/DraouiBilal/Runiverse-cri/cri"
+	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
 	"github.com/DraouiBilal/Runiverse/server"
 	"google.golang.org/grpc"
 	"log"
@@ -24,7 +24,11 @@ func main() {
 		port = "50051"
 	}
 
-	runtimes := setup.Setup(refreash_runtime)
+	runtimes, err := setup.Setup(refreash_runtime)
+
+	if err != nil {
+		log.Fatal("Error while setting up the runtime: ",err)
+	}
 
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {

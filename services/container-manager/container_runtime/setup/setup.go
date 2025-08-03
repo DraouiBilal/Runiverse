@@ -10,7 +10,7 @@ import (
 	"strconv"
 )
 
-func Setup(refreash bool) []container_runtime.ContainerRuntime{
+func Setup(refreash bool) ([]container_runtime.ContainerRuntime, error) {
 	if !refreash {
         log.Println("Loading config from" + RUNTIME_CONFIG_PATH + RUNTIME_CONFIG_FILE)
         runtimes := []container_runtime.ContainerRuntime{}
@@ -26,13 +26,17 @@ func Setup(refreash bool) []container_runtime.ContainerRuntime{
                 },
             }))
         }
-        return runtimes
+        return runtimes, nil
 	}
 	log.Println("Setting Up Runiverse...")
 
 	checkAndCreateRuniverseDir(RUNTIME_CONFIG_PATH)
 
-	runtimes := checkContainerRuntime()
+	runtimes, err := checkContainerRuntime()
+
+	if err != nil {
+		return []container_runtime.ContainerRuntime{}, err
+	}
 
 	if len(runtimes) == 0 {
 		log.Println("No default runtime found, Checking runtime.yml file for custom config")
@@ -41,7 +45,12 @@ func Setup(refreash bool) []container_runtime.ContainerRuntime{
 	log.Print("Found " + strconv.Itoa(len(runtimes)) + " Runtime")
 
 	for _, rt := range runtimes {
-		info := rt.GetInfo()
+		info, err := rt.GetInfo()
+
+		if err != nil {
+			log.Println("Error: Failed to get runtime info")
+		}
+
 		fmt.Println(fmt.Sprintf(`
             Name: %s
             Runtime: %s
@@ -53,7 +62,7 @@ func Setup(refreash bool) []container_runtime.ContainerRuntime{
 
 	log.Println("Creating runtime config file at " + RUNTIME_CONFIG_PATH + RUNTIME_CONFIG_FILE)
 	createConfigFile(runtimes)
-    return runtimes
+    return runtimes, nil
 }
 
 func checkContainerRuntime() ([]container_runtime.ContainerRuntime, error) {
@@ -105,7 +114,11 @@ func createConfigFile(runtimes []container_runtime.ContainerRuntime) {
 	config := []Config{}
 
 	for _, rt := range runtimes {
-		info := rt.GetInfo()
+		info, err := rt.GetInfo()
+
+		if err != nil {
+			log.Println("Error: Failed to get runtime info")
+		}
 		cf := Config{
 			Name:       info.Name,
 			Runtime:    info.Runtime,

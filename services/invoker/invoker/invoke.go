@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
     "google.golang.org/grpc/credentials/insecure"
-	"github.com/DraouiBilal/Runiverse-cri/cri" 
+	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1" 
 	"google.golang.org/grpc"
 )
 func Invoke(image string, command []string) {
