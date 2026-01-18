@@ -1,6 +1,6 @@
 package runtime
 
-import "github.com/DraouiBilal/Runiverse/container_runtime"
+import "github.com/DraouiBilal/Runiverse/runner/services/container_runtime"
 
 func RuntimeFactory(runtime_type string, params container_runtime.System) container_runtime.ContainerRuntime {
     switch runtime_type{

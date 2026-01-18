@@ -1,4 +1,4 @@
-module github.com/DraouiBilal/Runiverse
+module github.com/DraouiBilal/Runiverse/runner
 
 go 1.24.2
 

@@ -1,12 +1,16 @@
 package runner
 
 import (
-    "github.com/DraouiBilal/Runiverse/container_runtime"
+	"log"
+
+	"github.com/DraouiBilal/Runiverse/runner/services/container_runtime"
 )
 
 func RunCode(runtime container_runtime.ContainerRuntime, container container_runtime.Container) (string, error) {
 
+
 	id, create_err := runtime.CreateContainer(container)
+	log.Println("Container", container, "runtime", runtime)
 	
 	if create_err != nil {
 		return "", create_err

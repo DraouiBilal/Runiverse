@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"log"
 	"io"
 	cri "github.com/DraouiBilal/Runiverse-cri/git/v1"
 	"github.com/DraouiBilal/Runiverse/git-server/services/git"
@@ -104,9 +105,12 @@ func (s *Server) Fetch(req *cri.FetchRequest, stream cri.GitService_FetchServer)
     }
     
     buffer := make([]byte, 32*1024) // 32KB chunks
+	totalBytes := 0
+    
     for {
         n, err := packfileReader.Read(buffer)
         
+        // Send data if we read any
         if n > 0 {
             if sendErr := stream.Send(&cri.FetchResponse{
                 PackfileChunk: buffer[:n],
@@ -115,12 +119,14 @@ func (s *Server) Fetch(req *cri.FetchRequest, stream cri.GitService_FetchServer)
             }
         }
         
+        // Check for EOF or errors AFTER processing data
         if err == io.EOF {
+            log.Printf("Fetch complete: sent %d bytes total\n", totalBytes)
             break
         }
         
         if err != nil {
-            return err
+            return fmt.Errorf("read error: %w", err)
         }
     }
     

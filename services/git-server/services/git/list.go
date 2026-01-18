@@ -28,13 +28,9 @@ func getRefs(repoPath string) ([]string, error) {
 	})
 
 	headRef, err := r.Reference(plumbing.HEAD, false) // false = don't resolve to hash
+
 	if err == nil && headRef.Type() == plumbing.SymbolicReference {
 		refsArray = append(refsArray, fmt.Sprintf("@%s HEAD", headRef.Target()))
-
-		resolvedHead, err := r.Reference(plumbing.HEAD, true)
-		if err == nil {
-			refsArray = append(refsArray, fmt.Sprintf("%s HEAD", resolvedHead.Hash().String()))
-		}
 	}
 
 	refsArray = append(refsArray, fmt.Sprintln())

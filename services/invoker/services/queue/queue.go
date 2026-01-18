@@ -3,7 +3,7 @@ package queue
 import (
 	"fmt"
 	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
-	"github.com/DraouiBilal/Runiverse/invoker"
+	"github.com/DraouiBilal/Runiverse/invoker/services/invoker"
 	"log"
 	"strings"
 	"sync"

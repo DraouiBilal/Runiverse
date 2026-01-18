@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/DraouiBilal/Runiverse/container_runtime/setup"
+	"github.com/DraouiBilal/Runiverse/runner/services/container_runtime/setup"
 	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
-	"github.com/DraouiBilal/Runiverse/server"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -37,7 +36,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 	// Register the gRPC service
-	cri.RegisterRuntimeServiceServer(grpcServer, &server.Server{Runtime: runtimes[0]})
+	cri.RegisterRuntimeServiceServer(grpcServer, &Server{Runtime: runtimes[0]})
 	log.Println("Server is listening on port " + port)
 	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

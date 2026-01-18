@@ -8,7 +8,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/go-git/go-git/v5/plumbing"
 	"github.com/go-git/go-git/v5/plumbing/format/packfile"
-	"github.com/go-git/go-git/v5/plumbing/object"
+	"github.com/go-git/go-git/v5/plumbing/filemode"
 )
 
 func (s *Server) Fetch(repoPath string, req FetchRequest) (io.Reader, error) {
@@ -49,7 +49,6 @@ func (s *Server) Fetch(repoPath string, req FetchRequest) (io.Reader, error) {
 	return bytes.NewReader(buf.Bytes()), nil
 }
 
-// Helper function to collect all objects reachable from a commit
 func (s *Server) collectObjects(repo *git.Repository, startHash plumbing.Hash,
 	collected map[plumbing.Hash]bool, haves []string) error {
 
@@ -69,34 +68,80 @@ func (s *Server) collectObjects(repo *git.Repository, startHash plumbing.Hash,
 		return nil
 	}
 
-	// We don't have this object, so let's mark it as collected
+	// Mark this object as collected
 	collected[startHash] = true
 
-	// Try to interpret as a commit (most common case)
+	// Try to interpret as a commit
 	commit, err := repo.CommitObject(startHash)
 	if err == nil {
-		// Add the tree
-		collected[commit.TreeHash] = true
-
-		// Walk the tree to get all blobs
-		tree, err := commit.Tree()
-		if err == nil {
-			tree.Files().ForEach(func(f *object.File) error {
-				collected[f.Hash] = true
-				return nil
-			})
+		// Recursively collect the tree and all its contents
+		if err := s.collectTreeObjects(repo, commit.TreeHash, collected); err != nil {
+			return err
 		}
 
 		// Recursively process parent commits
 		for _, parentHash := range commit.ParentHashes {
-			if !haveMap[parentHash] {
-				s.collectObjects(repo, parentHash, collected, haves)
+			if !haveMap[parentHash] && !collected[parentHash] {
+				if err := s.collectObjects(repo, parentHash, collected, haves); err != nil {
+					return err
+				}
 			}
 		}
 
 		return nil
 	}
 
-	// If it's not a commit, we already added the object to collected
+	// Try as a tree
+	tree, err := repo.TreeObject(startHash)
+	if err == nil {
+		return s.collectTreeObjects(repo, tree.Hash, collected)
+	}
+
+	// Try as a blob - already added to collected above
+	_, err = repo.BlobObject(startHash)
+	if err == nil {
+		return nil
+	}
+
+	// Try as a tag
+	tag, err := repo.TagObject(startHash)
+	if err == nil {
+		collected[tag.Target] = true
+		return s.collectObjects(repo, tag.Target, collected, haves)
+	}
+
+	return fmt.Errorf("unknown object type for %s", startHash)
+}
+
+// New helper function to recursively collect tree objects
+func (s *Server) collectTreeObjects(repo *git.Repository, treeHash plumbing.Hash,
+	collected map[plumbing.Hash]bool) error {
+
+	// Skip if already collected
+	if collected[treeHash] {
+		return nil
+	}
+
+	collected[treeHash] = true
+
+	tree, err := repo.TreeObject(treeHash)
+	if err != nil {
+		return fmt.Errorf("failed to get tree %s: %w", treeHash, err)
+	}
+
+	// Iterate over all entries in the tree
+	for _, entry := range tree.Entries {
+		collected[entry.Hash] = true
+
+		// If it's a tree (subdirectory), recursively collect it
+		if entry.Mode == filemode.Dir {
+			if err := s.collectTreeObjects(repo, entry.Hash, collected); err != nil {
+				return err
+			}
+		}
+		// Blobs (files) are already added above
+	}
+
 	return nil
 }
+

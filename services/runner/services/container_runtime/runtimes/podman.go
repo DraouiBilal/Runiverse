@@ -1,7 +1,7 @@
 package runtime
 
 import (
-	"github.com/DraouiBilal/Runiverse/container_runtime"
+	"github.com/DraouiBilal/Runiverse/runner/services/container_runtime"
 	"github.com/DraouiBilal/Runiverse-backend-lib/api"
 )
 
@@ -19,17 +19,17 @@ func (p PodmanRuntime) CreateContainer(container container_runtime.Container) (s
 }
 
 func (p PodmanRuntime) StartContainer(container container_runtime.Container) (string, error) {
-	_, err := api.Post[interface{}]("http://localhost/v5.0.0/libpod/containers/"+container.Id+"/start", container, api.Options{Socket: p.SocketPath})
+	_, err := api.Post[any]("http://localhost/v5.0.0/libpod/containers/"+container.Id+"/start", container, api.Options{Socket: p.SocketPath})
 	return container.Id, err
 }
 
 func (p PodmanRuntime) StopContainer(container container_runtime.Container) (string, error) {
-	_, err := api.Post[interface{}]("http://localhost/v5.0.0/libpod/containers/"+container.Id+"/stop", container, api.Options{Socket: p.SocketPath})
+	_, err := api.Post[any]("http://localhost/v5.0.0/libpod/containers/"+container.Id+"/stop", container, api.Options{Socket: p.SocketPath})
 	return container.Id, err
 }
 
 func (p PodmanRuntime) WaitForContainer(container container_runtime.Container) (string, error) {
-	_, err := api.Post[interface{}]("http://localhost/v5.0.0/libpod/containers/"+container.Id+"/wait", container, api.Options{Socket: p.SocketPath})
+	_, err := api.Post[any]("http://localhost/v5.0.0/libpod/containers/"+container.Id+"/wait", container, api.Options{Socket: p.SocketPath})
     return container.Id + " Done", err
 }
 

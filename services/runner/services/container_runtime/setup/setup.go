@@ -2,8 +2,8 @@ package setup
 
 import (
 	"fmt"
-	"github.com/DraouiBilal/Runiverse/container_runtime"
-	runtime "github.com/DraouiBilal/Runiverse/container_runtime/runtimes"
+	"github.com/DraouiBilal/Runiverse/runner/services/container_runtime"
+	runtime "github.com/DraouiBilal/Runiverse/runner/services/container_runtime/runtimes"
 	"gopkg.in/yaml.v3"
 	"log"
 	"os"

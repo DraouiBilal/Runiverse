@@ -1,12 +1,13 @@
-package server
+package main
 
 import (
 	"context"
 	"fmt"
+	"log"
 
-	"github.com/DraouiBilal/Runiverse/container_runtime"
 	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
-	"github.com/DraouiBilal/Runiverse/runner"
+	"github.com/DraouiBilal/Runiverse/runner/services/container_runtime"
+	"github.com/DraouiBilal/Runiverse/runner/services/runner"
 )
 
 // Define the server struct
@@ -30,7 +31,14 @@ func (s *Server) RunCode(ctx context.Context, req *cri.RunCodeRequest) (*cri.Run
 			},
 		},
 	}
+
 	logs, err := runner.RunCode(s.Runtime, container)
 
-	return &cri.RunCodeResponse{Logs: logs, Err: err.Error()},err
+	if err != nil {
+		log.Println(err)
+	}
+
+	response := cri.RunCodeResponse{Logs: logs, Err: err.Error()}
+
+	return &response, err
 }

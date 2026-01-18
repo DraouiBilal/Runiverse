@@ -2,8 +2,7 @@ package main
 
 import (
 	cri "github.com/DraouiBilal/Runiverse-cri/cri/v1"
-	"github.com/DraouiBilal/Runiverse/queue"
-	"github.com/DraouiBilal/Runiverse/server"
+	"github.com/DraouiBilal/Runiverse/invoker/services/queue"
 	"google.golang.org/grpc"
 	"log"
 	"net"
@@ -12,11 +11,6 @@ import (
 
 func main() {
 	q := queue.InitQueue()
-
-	//q.AddJob(&cri.InvocationRequest{
-	//	Image:   "golang",
-	//	Command: []string{"go", "run", "/app/main.go"},
-	//})
 
 	port := os.Getenv("PORT")
 
@@ -31,8 +25,7 @@ func main() {
 
 	grpcServer := grpc.NewServer()
 
-	// Register the gRPC service
-	cri.RegisterInvokerServiceServer(grpcServer, &server.Server{Queue: q})
+	cri.RegisterInvokerServiceServer(grpcServer, &Server{Queue: q})
 
 	log.Println("Server is listening on port " + port)
 

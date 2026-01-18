@@ -25,7 +25,7 @@ static_resources:
               domains: ["*"]
               routes:
               - match:
-                  prefix: /cri.InvokerService
+                  prefix: /cri.v1.InvokerService
                 route:
                   cluster: invoker_service
                   timeout: 60s
@@ -35,7 +35,7 @@ static_resources:
               "@type": type.googleapis.com/envoy.extensions.filters.http.grpc_json_transcoder.v3.GrpcJsonTranscoder
               proto_descriptor: /etc/envoy/proto.pb
               services:
-              - cri.InvokerService
+              - cri.v1.InvokerService
               print_options:
                 add_whitespace: true
                 always_print_primitive_fields: true
